@@ -26,7 +26,7 @@ def clean_str(string):
     return string.strip().lower()
 
 
-def load_data_and_labels():
+def load_data_and_labels(data_dir):
     '''
     Loads MR polarity data from files, splits the data into words and generates labels.
     Returns split sentences and labels.
@@ -46,16 +46,15 @@ def load_data_and_labels():
     return [x_text, y]
 	'''
     #data_sets = glob.glob("./data/*.txt")
-    data_sets = "./data/"
     #store all of the class data in a list
     class_data = []
     label_list = []
     default_list = []
 
     #load data from files
-    for i in os.listdir(data_sets):
-        print (data_sets+i)
-        examples = list(open(data_sets+i).readlines())
+    for i in os.listdir(data_dir):
+        print (data_dir+i)
+        examples = list(open(data_dir+i).readlines())
         examples = [s.strip() for s in examples]
         #append these examples to the list of lists
         class_data.append(examples)

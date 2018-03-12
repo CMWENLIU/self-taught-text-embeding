@@ -103,15 +103,6 @@ def load_embedding_vectors(vocabulary, filename, vector_size):
     f.close()
     return embedding_vectors
 
-def train_word_emb(data_sets, dimension):
-    for data in data_sets:
-	head, filename = os.path.split(data)
-	filename += '.vec100'
-	filepath = os.path.join(head, filename)
-	sentences = LineSentence(data)
-	model = Word2Vec(sentences, size=100, window=5, min_count=5, workers=4)
-	model.wv.save_word2vec_format(filepath, binary=False)
-	print(filename + ' has been finished!')
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """

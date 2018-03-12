@@ -15,10 +15,11 @@ from tensorflow.contrib import learn
 # Data loading params
 tf.flags.DEFINE_float("dev_sample_percentage", .2, "Percentage of the training data to use for validation")
 tf.flags.DEFINE_string("labeled_data_dir", "./labeled-data/", "Data directory for labeled data.")
-#tf.flags.DEFINE_string("negative_data_file", "./data/rt-polaritydata/rt-polarity.neg", "Data source for the negative data.")
 
 # Model Hyperparameters
+tf.flags.DEFINE_boolean("transfer_learning", False, "Transfer learning from unlabeled data")
 tf.flags.DEFINE_boolean("trained_embedding", False, "Allow trained embedding or random embedding")
+tf.flags.DEFINE_string("embedding_dir", "./embedding/", "Data directory for trained embedding.")
 tf.flags.DEFINE_integer("embedding_dim", 64, "Dimensionality of character embedding (default: 128)")
 tf.flags.DEFINE_string("filter_sizes", "3,4,5", "Comma-separated filter sizes (default: '3,4,5')")
 tf.flags.DEFINE_integer("num_filters", 32, "Number of filters per filter size (default: 128)")
@@ -148,7 +149,9 @@ with tf.Graph().as_default():
             vocabulary = vocab_processor.vocabulary_
             initW = None
             print("Load pre-trained embedding file ...... ")
-            initW = data_helpers.load_embedding_vectors(vocabulary, './data/*.vec', FLAGS.embedding_dim)
+			l-embfile = FLAGS.embedding_dir + 'label.' + str(FLAGS.embedding_dim) + '.vec'
+            al-embfile = FLAGS.embedding_dir + 'all.' + str(FLAGS.embedding_dim) + '.vec'
+            initW = data_helpers.load_embedding_vectors(vocabulary, FALG.embedding_dir + , FLAGS.embedding_dim)
             print("embedding file has been loaded\n")
             sess.run(cnn.W.assign(initW))
 

@@ -17,7 +17,7 @@ tf.flags.DEFINE_float("dev_sample_percentage", .2, "Percentage of the training d
 tf.flags.DEFINE_string("labeled_data_dir", "./labeled-data/", "Data directory for labeled data.")
 tf.flags.DEFINE_string("unlabeled_data_dir", "./unlabeled-data/", "Data directory for labeled data.")
 # Model Hyperparameters
-tf.flags.DEFINE_boolean("transfer_learning", True, "Transfer learning from unlabeled data")
+tf.flags.DEFINE_boolean("transfer_learning", False, "Transfer learning from unlabeled data")
 tf.flags.DEFINE_boolean("trained_embedding", True, "Allow trained embedding or random embedding")
 tf.flags.DEFINE_string("embedding_dir", "./embedding/", "Data directory for trained embedding.")
 tf.flags.DEFINE_integer("embedding_dim", 100, "Dimensionality of character embedding (default: 128)")

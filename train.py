@@ -3,6 +3,7 @@
 import tensorflow as tf
 import numpy as np
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import time
 import datetime
 import data_helpers
@@ -38,7 +39,7 @@ tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on 
 
 FLAGS = tf.flags.FLAGS
 FLAGS._parse_flags()
-print("\nParameters:")
+print("\nParameters:-------------------------------------------------------")
 for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
@@ -48,7 +49,7 @@ print("")
 # ==================================================
 
 # Load data
-print("Loading data...")
+print("Loading data for CNN classification model--------------------------")
 x_text, y = data_helpers.load_data_and_labels(FLAGS.labeled_data_dir)
 
 # Build vocabulary
@@ -70,15 +71,13 @@ x_train, x_dev = x_shuffled[:dev_sample_index], x_shuffled[dev_sample_index:]
 y_train, y_dev = y_shuffled[:dev_sample_index], y_shuffled[dev_sample_index:]
 
 del x, y, x_shuffled, y_shuffled
-
+print("Data is successfully loaded!")
 print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
 print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
 print('Shape of x_train: ', x_train.shape)
 print('Shape of y_train: ', y_train.shape)
 print('Shape of x_dev: ', x_dev.shape)
 print('Shape of y_dev: ', y_dev.shape)
-print('x_train[30:35]: ', x_train[30:35])
-print('y_train[30:35]: ', y_train[30:35])
 
 # Training
 # ==================================================
@@ -148,20 +147,26 @@ with tf.Graph().as_default():
         if (FLAGS.trained_embedding):
             vocabulary = vocab_processor.vocabulary_
             initW = None
-            print("Load pre-trained embedding file ...... ")
+            print("Load embedding file--------------------------------------------------")
             yes_transfer, no_transfer = 'all', 'labeled'
             l_embfile = no_transfer + '.' + str(FLAGS.embedding_dim) + '.vec'
             al_embfile = yes_transfer + '.' + str(FLAGS.embedding_dim) + '.vec'
             if FLAGS.transfer_learning:
-            	datafolders = [FLAGS.labeled_data_dir, FLAGS.unlabeled_data_dir]
-            	data_helpers.train_word_embedding(FLAGS.embedding_dim, yes_transfer, datafolders)
-            	embfile = FLAGS.embedding_dir + al_embfile
+                datafolders = [FLAGS.labeled_data_dir, FLAGS.unlabeled_data_dir]
+                if os.path.isfile(FLAGS.embedding_dir + al_embfile):
+                    print(al_embfile + 'has already been exist')
+                else:
+                    data_helpers.train_word_embedding(FLAGS.embedding_dim, yes_transfer, datafolders)
+                embfile = FLAGS.embedding_dir + al_embfile
             else:
-            	datafolders = [FLAGS.labeled_data_dir]
-            	data_helpers.train_word_embedding(FLAGS.embedding_dim, no_transfer, datafolders)
-            	embfile = FLAGS.embedding_dir + l_embfile
+                datafolders = [FLAGS.labeled_data_dir]
+                if os.path.isfile(FLAGS.embedding_dir + l_embfile):
+                    print(l_embfile + 'has already been exist')
+                else:
+                    data_helpers.train_word_embedding(FLAGS.embedding_dim, no_transfer, datafolders)
+                embfile = FLAGS.embedding_dir + l_embfile
             initW = data_helpers.load_embedding_vectors(vocabulary, embfile, FLAGS.embedding_dim)
-            print('embedding file' + embfile + ' has been loaded\n')
+            print('embedding file: ' + embfile + ' has been sucessfully loaded!\n')
             sess.run(cnn.W.assign(initW))
 
         def train_step(x_batch, y_batch):

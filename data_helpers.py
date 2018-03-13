@@ -53,6 +53,7 @@ def load_data_and_labels(data_dir):
     default_list = []
 
     #load data from files
+    print('Following is the data loaded for CNN model:')
     for i in os.listdir(data_dir):
         print (data_dir+i)
         examples = list(open(data_dir+i).readlines())
@@ -82,6 +83,7 @@ def load_data_and_labels(data_dir):
     # Generate labels
     final_labels = []
     counter = 0
+    print('Following is the labels for supervised learning:')
     for class_examples in class_data:
         print (label_list[counter])
         final_labels.append([label_list[counter] for _ in class_data[counter]])
@@ -126,6 +128,8 @@ def batch_iter(data, batch_size, num_epochs, shuffle=True):
             yield shuffled_data[start_index:end_index]
 def train_word_embedding(dimension,is_transfer, data_dirs) :
 	with open('temp.txt', 'w', encoding = 'utf-8') as wfile:
+		print('Following data are being loaded to train embedding vetors:')
+		count = 0
 		for data_dir in data_dirs:
 			for i in os.listdir(data_dir):
 				print (data_dir + i)
@@ -133,8 +137,9 @@ def train_word_embedding(dimension,is_transfer, data_dirs) :
 					for line in rfile:
 						new = clean_str(line)
 						wfile.write(new + '\n')
+						count += 1
 	sentences = LineSentence('temp.txt')
-	#print ('the length of sentences: ', len(sentences))
+	print ('Totally: ' + str(count) + ' lines of text')
 	model = Word2Vec(sentences, size = dimension, window=5, min_count=5, workers=4)
 	filesavepath = './embedding/' + is_transfer + '.' + str(dimension) + '.vec'
 	model.wv.save_word2vec_format(filesavepath, binary=False)

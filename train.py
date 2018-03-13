@@ -15,10 +15,10 @@ from tensorflow.contrib import learn
 # Data loading params
 tf.flags.DEFINE_float("dev_sample_percentage", .2, "Percentage of the training data to use for validation")
 tf.flags.DEFINE_string("labeled_data_dir", "./labeled-data/", "Data directory for labeled data.")
-
+tf.flags.DEFINE_string("unlabeled_data_dir", "./unlabeled-data/", "Data directory for labeled data.")
 # Model Hyperparameters
 tf.flags.DEFINE_boolean("transfer_learning", False, "Transfer learning from unlabeled data")
-tf.flags.DEFINE_boolean("trained_embedding", False, "Allow trained embedding or random embedding")
+tf.flags.DEFINE_boolean("trained_embedding", True, "Allow trained embedding or random embedding")
 tf.flags.DEFINE_string("embedding_dir", "./embedding/", "Data directory for trained embedding.")
 tf.flags.DEFINE_integer("embedding_dim", 64, "Dimensionality of character embedding (default: 128)")
 tf.flags.DEFINE_string("filter_sizes", "3,4,5", "Comma-separated filter sizes (default: '3,4,5')")
@@ -149,10 +149,19 @@ with tf.Graph().as_default():
             vocabulary = vocab_processor.vocabulary_
             initW = None
             print("Load pre-trained embedding file ...... ")
-			l-embfile = FLAGS.embedding_dir + 'label.' + str(FLAGS.embedding_dim) + '.vec'
-            al-embfile = FLAGS.embedding_dir + 'all.' + str(FLAGS.embedding_dim) + '.vec'
-            initW = data_helpers.load_embedding_vectors(vocabulary, FALG.embedding_dir + , FLAGS.embedding_dim)
-            print("embedding file has been loaded\n")
+            yes_transfer, no_transfer = 'all', 'labeled'
+            l_embfile = no_transfer + '.' + str(FLAGS.embedding_dim) + '.vec'
+            al_embfile = yes_transfer + '.' + str(FLAGS.embedding_dim) + '.vec'
+            if FLAGS.transfer_learning:
+            	datafolders = [FLAGS.labeled_data_dir, FLAGS.unlabeled_data_dir]
+            	data_helpers.train_word_embedding(FLAGS.embedding_dim, yes_transfer, datafolders)
+            	embfile = FLAGS.embedding_dir + al_embfile
+            else:
+            	datafolders = [FLAGS.labeled_data_dir]
+            	data_helpers.train_word_embedding(FLAGS.embedding_dim, no_transfer, datafolders)
+            	embfile = FLAGS.embedding_dir + l_embfile
+            initW = data_helpers.load_embedding_vectors(vocabulary, embfile, FLAGS.embedding_dim)
+            print('embedding file' + embfile + ' has been loaded\n')
             sess.run(cnn.W.assign(initW))
 
         def train_step(x_batch, y_batch):

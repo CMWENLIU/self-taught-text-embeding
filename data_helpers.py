@@ -3,6 +3,8 @@ import re
 import glob, os
 import itertools
 from collections import Counter
+from gensim.models import Word2Vec, KeyedVectors
+from gensim.models.word2vec import LineSentence
 
 
 def clean_str(string):
@@ -122,3 +124,19 @@ def batch_iter(data, batch_size, num_epochs, shuffle=True):
             start_index = batch_num * batch_size
             end_index = min((batch_num + 1) * batch_size, data_size)
             yield shuffled_data[start_index:end_index]
+def train_word_embedding(dimension,is_transfer, data_dirs) :
+    sentences = []
+    for data_dir in data_dirs:
+        for i in os.listdir(data_dir):
+            print (data_dir + i)
+            sentences += LineSentence(data_dir + i)
+    model = Word2Vec(sentences, size = dimension, window=5, min_count=5, workers=4)
+    filesavepath = './embedding/' + is_transfer + '.' + str(dimension) + '.vec'
+    model.wv.save_word2vec_format(filesavepath, binary=False)
+
+    #head, filename = os.path.split(data)
+    #filename += '.vec100'
+    #filepath = os.path.join(head, filename)
+    #sentences = LineSentence(data)
+    #model = Word2Vec(sentences, size=100, window=5, min_count=5, workers=4)
+    #model.wv.save_word2vec_format(filepath, binary=False)

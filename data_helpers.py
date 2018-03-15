@@ -54,7 +54,7 @@ def load_data_and_labels(data_dir):
 
     #load data from files
     print('Following is the data loaded for CNN model:')
-    for i in os.listdir(data_dir):
+    for i in sorted(os.listdir(data_dir)):
         print (data_dir+i)
         examples = list(open(data_dir+i).readlines())
         examples = [s.strip() for s in examples]
@@ -131,7 +131,7 @@ def train_word_embedding(dimension,is_transfer, data_dirs) :
 		print('Following data are being loaded to train embedding vetors:')
 		count = 0
 		for data_dir in data_dirs:
-			for i in os.listdir(data_dir):
+			for i in sorted(os.listdir(data_dir)):
 				print (data_dir + i)
 				with open (data_dir + i, 'r') as rfile:
 					for line in rfile:
